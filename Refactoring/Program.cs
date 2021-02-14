@@ -1,17 +1,19 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Globalization;
 using System.IO;
-using Newtonsoft.Json;
 
 namespace Refactoring
 {
     public class Program
     {
+        private static Plays plays;
+
         public static void Main(string[] args)
         {
-            var plays = JsonConvert.DeserializeObject<Plays>(File.ReadAllText(@"external\plays.json"));
+            var tempPlays = JsonConvert.DeserializeObject<Plays>(File.ReadAllText(@"external\plays.json"));
             var invoices = JsonConvert.DeserializeObject<Invoice[]>(File.ReadAllText(@"external\invoices.json"));
-            Console.Write(Statement(invoices[0], plays));
+            Console.Write(Statement(invoices[0], tempPlays));
         }
 
         public class Plays
@@ -39,8 +41,9 @@ namespace Refactoring
             public Performance[] Performances { get; set; }
         }
 
-        public static string Statement(Invoice invoice, Plays plays)
+        public static string Statement(Invoice invoice, Plays tempPlays)
         {
+            plays = tempPlays;
             double totalAmount = 0;
             double volumeCredits = 0;
             var result = $"Statement for {invoice.Customer}\n";
@@ -48,8 +51,7 @@ namespace Refactoring
 
             foreach (var perf in invoice.Performances)
             {
-                var play = (Play) plays.GetType().GetProperty(perf.PlayId)?.GetValue(plays, null);
-
+                var play = PlayFor(perf);
                 var thisAmount = AmountFor(play, perf);
 
                 // add volume credits
@@ -66,6 +68,11 @@ namespace Refactoring
             result += $"You earned {volumeCredits} credits";
             
             return result;
+        }
+
+        private static Play PlayFor(Performance aPerformance)
+        {
+            return (Play) plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
         }
 
         private static int AmountFor(Play play, Performance aPerformance)
