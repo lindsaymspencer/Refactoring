@@ -64,7 +64,7 @@ namespace Refactoring
 
         private static double TotalAmount() => invoice.Performances.Aggregate<Performance, double>(0, (current, perf) => current + AmountFor(perf));
 
-        private static double TotalVolumeCredits() => invoice.Performances.Sum(perf => VolumeCreditsFor(perf));
+        private static double TotalVolumeCredits() => invoice.Performances.Sum(VolumeCreditsFor);
 
         private static string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
 
