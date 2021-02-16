@@ -45,7 +45,6 @@ namespace Refactoring
         {
             plays = tempPlays;
             double totalAmount = 0;
-            double volumeCredits = 0;
             var result = $"Statement for {invoice.Customer}\n";
 
             foreach (var perf in invoice.Performances)
@@ -55,6 +54,7 @@ namespace Refactoring
                 totalAmount += AmountFor(perf);
             }
 
+            double volumeCredits = 0;
             foreach (var perf in invoice.Performances)
             {
                 volumeCredits += VolumeCreditsFor(perf);
