@@ -1,5 +1,6 @@
 ﻿using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -42,15 +43,16 @@ namespace Refactoring
 
         public static string Statement(Invoice invoice, Plays plays)
         {
-            object[] statementData = {};
+            var statementData = new Dictionary<string, object>();
+            statementData.Add("Customer", invoice.Customer);
             return RenderPlainText(statementData, invoice, plays);
         }
 
-        private static string RenderPlainText(object[] statementData, Invoice invoice, Plays plays)
+        private static string RenderPlainText(Dictionary<string, object> data, Invoice invoice, Plays plays)
         {
             Play PlayFor(Performance aPerformance)
             {
-                return (Play) plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
+                return (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
             }
 
             string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
@@ -91,13 +93,13 @@ namespace Refactoring
             {
                 double result = 0;
                 result += Math.Max(aPerformance.Audience - 30, 0);
-                if ("comedy" == PlayFor(aPerformance).Type) result += Math.Floor(aPerformance.Audience / (double) 5);
+                if ("comedy" == PlayFor(aPerformance).Type) result += Math.Floor(aPerformance.Audience / (double)5);
                 return result;
             }
 
             double TotalVolumeCredits() => invoice.Performances.Sum(VolumeCreditsFor);
             {
-                var result = $"Statement for {invoice.Customer}\n";
+                var result = $"Statement for {data["Customer"]}\n";
                 foreach (var perf in invoice.Performances)
                 {
                     result += $"  {PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
