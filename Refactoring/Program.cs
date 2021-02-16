@@ -64,13 +64,13 @@ namespace Refactoring
 
         private static double Applesauce()
         {
-            double totalAmount = 0;
+            double result = 0;
             foreach (var perf in invoice.Performances)
             {
-                totalAmount += AmountFor(perf);
+                result += AmountFor(perf);
             }
 
-            return totalAmount;
+            return result;
         }
 
         private static double TotalVolumeCredits() => invoice.Performances.Sum(perf => VolumeCreditsFor(perf));
