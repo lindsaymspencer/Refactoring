@@ -53,9 +53,13 @@ namespace Refactoring
             double totalAmount = 0;
             foreach (var perf in invoice.Performances)
             {
+                totalAmount += AmountFor(perf);
+            }
+
+            foreach (var perf in invoice.Performances)
+            {
                 // print line for this order
                 result += $"  {PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
-                totalAmount += AmountFor(perf);
             }
 
             result += $"Amount owed is {Usd(totalAmount)}\n";
