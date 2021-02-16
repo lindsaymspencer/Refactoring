@@ -50,11 +50,7 @@ namespace Refactoring
 
             var result = $"Statement for {invoice.Customer}\n";
 
-            double totalAmount = 0;
-            foreach (var perf in invoice.Performances)
-            {
-                totalAmount += AmountFor(perf);
-            }
+            var totalAmount = Applesauce();
 
             foreach (var perf in invoice.Performances)
             {
@@ -66,6 +62,17 @@ namespace Refactoring
             result += $"You earned {TotalVolumeCredits()} credits";
 
             return result;
+        }
+
+        private static double Applesauce()
+        {
+            double totalAmount = 0;
+            foreach (var perf in invoice.Performances)
+            {
+                totalAmount += AmountFor(perf);
+            }
+
+            return totalAmount;
         }
 
         private static double TotalVolumeCredits() => invoice.Performances.Sum(perf => VolumeCreditsFor(perf));
