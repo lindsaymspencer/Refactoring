@@ -8,6 +8,7 @@ namespace Refactoring
     public class Program
     {
         private static Plays plays;
+        private static Invoice invoice;
 
         public static void Main(string[] args)
         {
@@ -41,9 +42,11 @@ namespace Refactoring
             public Performance[] Performances { get; set; }
         }
 
-        public static string Statement(Invoice invoice, Plays tempPlays)
+        public static string Statement(Invoice tempInvoice, Plays tempPlays)
         {
             plays = tempPlays;
+            invoice = tempInvoice;
+
             double totalAmount = 0;
             var result = $"Statement for {invoice.Customer}\n";
 
@@ -55,12 +58,12 @@ namespace Refactoring
             }
 
             result += $"Amount owed is {Usd(totalAmount)}\n";
-            result += $"You earned {TotalVolumeCredits(invoice)} credits";
+            result += $"You earned {TotalVolumeCredits()} credits";
 
             return result;
         }
 
-        private static double TotalVolumeCredits(Invoice invoice)
+        private static double TotalVolumeCredits()
         {
             double volumeCredits = 0;
             foreach (var perf in invoice.Performances)
