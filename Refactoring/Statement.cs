@@ -16,19 +16,10 @@ namespace Refactoring
                 this.aPerformance = aPerformance;
                 Play = aPlay;
             }
-
-            public Program.Play Play { get; set; }      
-        }
-
-        public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Program.Plays plays)
-        {
-            Program.Play PlayFor(Program.Performance aPerformance) =>
-                (Program.Play) plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
-
-            int AmountFor(Program.Performance aPerformance)
+            public int Amount()
             {
                 int result;
-                switch (aPerformance.Play.Type)
+                switch (Play.Type)
                 {
                     case "tragedy":
                         result = 40000;
@@ -48,12 +39,21 @@ namespace Refactoring
                         result += 300 * aPerformance.Audience;
                         break;
                     default:
-                        throw new Exception($"unknown type: {aPerformance.Play.Type}");
+                        throw new Exception($"unknown type: {Play.Type}");
                 }
 
                 return result;
             }
 
+            public Program.Play Play { get; set; }      
+        }
+
+        public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Program.Plays plays)
+        {
+            Program.Play PlayFor(Program.Performance aPerformance) =>
+                (Program.Play) plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
+
+           
             int VolumeCreditsFor(Program.Performance aPerformance)
             {
                 int result = 0;
@@ -67,7 +67,7 @@ namespace Refactoring
                 var calculator = new PerformanceCalculator(aPerformance, PlayFor(aPerformance));
                 var result = new Program.Performance() {Audience = aPerformance.Audience, PlayId = aPerformance.PlayId};
                 result.Play = calculator.Play;
-                result.Amount = AmountFor(result);
+                result.Amount = calculator.Amount();
                 result.VolumeCredits = VolumeCreditsFor(result);
                 return result;
             }
