@@ -47,22 +47,23 @@ namespace Refactoring
             double totalAmount = 0;
             double volumeCredits = 0;
             var result = $"Statement for {invoice.Customer}\n";
-            CultureInfo culture = new CultureInfo("en-US");
 
             foreach (var perf in invoice.Performances)
             {
                 volumeCredits += VolumeCreditsFor(perf);
 
                 // print line for this order
-                result += $"  {PlayFor(perf).Name}: {(AmountFor(perf) / 100).ToString("C", culture)} ({perf.Audience} seats)\n";
+                result += $"  {PlayFor(perf).Name}: {Format(AmountFor(perf) / 100)} ({perf.Audience} seats)\n";
                 totalAmount += AmountFor(perf);
             }
 
-            result += $"Amount owed is {(totalAmount / 100).ToString("C", culture)}\n";
+            result += $"Amount owed is {Format(totalAmount / 100)}\n";
             result += $"You earned {volumeCredits} credits";
             
             return result;
         }
+
+        private static string Format(double aNumber) => aNumber.ToString("c", new CultureInfo("en-US"));
 
         private static double VolumeCreditsFor(Performance aPerformance)
         {
