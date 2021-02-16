@@ -8,6 +8,15 @@ namespace Refactoring
 {
     public class Statement
     {
+        public class PerformanceCalculator
+        {
+            private Program.Performance aPerformance;
+            public PerformanceCalculator(Program.Performance aPerformance)
+            {
+                this.aPerformance = aPerformance;
+            }
+        }
+
         public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Program.Plays plays)
         {
             Program.Play PlayFor(Program.Performance aPerformance) =>
@@ -52,6 +61,7 @@ namespace Refactoring
 
             Program.Performance EnrichPerformance(Program.Performance aPerformance)
             {
+                var calculator = new PerformanceCalculator(aPerformance);
                 var result = new Program.Performance() {Audience = aPerformance.Audience, PlayId = aPerformance.PlayId};
                 result.Play = PlayFor(result);
                 result.Amount = AmountFor(result);
