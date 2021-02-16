@@ -33,7 +33,8 @@ namespace Refactoring
         {
             public string PlayId { get; set; }
             public int Audience { get; set; }
-            public Play? Play { get; set; }
+            public Play Play { get; set; }
+            public double Amount { get; set; }
         }
 
         public class Invoice
@@ -53,16 +54,11 @@ namespace Refactoring
             {
                     var result = new Performance() { Audience = aPerformance.Audience, PlayId = aPerformance.PlayId };
                     result.Play = PlayFor(result);
+                    result.Amount = AmountFor(result);
                     return result;
             }
 
             Play PlayFor(Performance aPerformance) => (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
-        }
-
-        private static string RenderPlainText(Dictionary<string, object> data, Plays plays)
-        {
-            string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
-
             int AmountFor(Performance aPerformance)
             {
                 int result;
@@ -91,8 +87,14 @@ namespace Refactoring
 
                 return result;
             }
+        }
 
-            double TotalAmount() => ((Performance[])data["Performances"]).Aggregate<Performance, double>(0, (current, perf) => current + AmountFor(perf));
+        private static string RenderPlainText(Dictionary<string, object> data, Plays plays)
+        {
+            string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
+
+
+            double TotalAmount() => ((Performance[])data["Performances"]).Aggregate<Performance, double>(0, (current, perf) => current + perf.Amount);
 
             double VolumeCreditsFor(Performance aPerformance)
             {
@@ -108,7 +110,7 @@ namespace Refactoring
                 var result = $"Statement for {data["Customer"]}\n";
                 foreach (var perf in ((Performance[])data["Performances"]))
                 {
-                    result += $"  {perf.Play.Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
+                    result += $"  {perf.Play.Name}: {Usd(perf.Amount)} ({perf.Audience} seats)\n";
                 }
 
                 result += $"Amount owed is {Usd(TotalAmount())}\n";
