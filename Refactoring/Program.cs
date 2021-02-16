@@ -50,15 +50,13 @@ namespace Refactoring
 
             var result = $"Statement for {invoice.Customer}\n";
 
-            var totalAmount = Applesauce();
-
             foreach (var perf in invoice.Performances)
             {
                 // print line for this order
                 result += $"  {PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
             }
 
-            result += $"Amount owed is {Usd(totalAmount)}\n";
+            result += $"Amount owed is {Usd(Applesauce())}\n";
             result += $"You earned {TotalVolumeCredits()} credits";
 
             return result;
