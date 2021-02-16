@@ -56,13 +56,13 @@ namespace Refactoring
                 result += $"  {PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
             }
 
-            result += $"Amount owed is {Usd(Applesauce())}\n";
+            result += $"Amount owed is {Usd(TotalAmount())}\n";
             result += $"You earned {TotalVolumeCredits()} credits";
 
             return result;
         }
 
-        private static double Applesauce()
+        private static double TotalAmount()
         {
             double result = 0;
             foreach (var perf in invoice.Performances)
