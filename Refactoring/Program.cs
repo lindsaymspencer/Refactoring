@@ -35,6 +35,7 @@ namespace Refactoring
             public int Audience { get; set; }
             public Play Play { get; set; }
             public double Amount { get; set; }
+            public int VolumeCredits { get; set; }
         }
 
         public class Invoice
@@ -52,13 +53,16 @@ namespace Refactoring
 
             Performance EnrichPerformance(Performance aPerformance)
             {
-                    var result = new Performance() { Audience = aPerformance.Audience, PlayId = aPerformance.PlayId };
-                    result.Play = PlayFor(result);
-                    result.Amount = AmountFor(result);
-                    return result;
+                var result = new Performance() { Audience = aPerformance.Audience, PlayId = aPerformance.PlayId };
+                result.Play = PlayFor(result);
+                result.Amount = AmountFor(result);
+                result.VolumeCredits = VolumeCreditsFor(result);
+                return result;
             }
 
-            Play PlayFor(Performance aPerformance) => (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
+            Play PlayFor(Performance aPerformance) =>
+                (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
+
             int AmountFor(Performance aPerformance)
             {
                 int result;
@@ -87,6 +91,14 @@ namespace Refactoring
 
                 return result;
             }
+
+            int VolumeCreditsFor(Performance aPerformance)
+            {
+                int result = 0;
+                result += Math.Max(aPerformance.Audience - 30, 0);
+                if ("comedy" == aPerformance.Play.Type) result += (int)Math.Floor(aPerformance.Audience / (double)5);
+                return result;
+            }
         }
 
         private static string RenderPlainText(Dictionary<string, object> data, Plays plays)
@@ -96,15 +108,15 @@ namespace Refactoring
 
             double TotalAmount() => ((Performance[])data["Performances"]).Aggregate<Performance, double>(0, (current, perf) => current + perf.Amount);
 
-            double VolumeCreditsFor(Performance aPerformance)
+            double TotalVolumeCredits()
             {
-                double result = 0;
-                result += Math.Max(aPerformance.Audience - 30, 0);
-                if ("comedy" == aPerformance.Play.Type) result += Math.Floor(aPerformance.Audience / (double)5);
+                var result = 0;
+                foreach (var perf in ((Performance[])data["Performances"]))
+                {
+                    result += perf.VolumeCredits;
+                }
                 return result;
             }
-
-            double TotalVolumeCredits() => ((Performance[])data["Performances"]).Sum(VolumeCreditsFor);
 
             {
                 var result = $"Statement for {data["Customer"]}\n";
