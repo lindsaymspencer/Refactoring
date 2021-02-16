@@ -64,12 +64,12 @@ namespace Refactoring
             return result;
         }
 
-        private static double VolumeCreditsFor(Performance perf)
+        private static double VolumeCreditsFor(Performance aPerformance)
         {
-            double volumeCredits = 0;
-            volumeCredits += Math.Max(perf.Audience - 30, 0);
-            if ("comedy" == PlayFor(perf).Type) volumeCredits += Math.Floor(perf.Audience / (double) 5);
-            return volumeCredits;
+            double result = 0;
+            result += Math.Max(aPerformance.Audience - 30, 0);
+            if ("comedy" == PlayFor(aPerformance).Type) result += Math.Floor(aPerformance.Audience / (double) 5);
+            return result;
         }
 
         private static Play PlayFor(Performance aPerformance)
