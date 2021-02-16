@@ -45,6 +45,7 @@ namespace Refactoring
         {
             var statementData = new Dictionary<string, object>();
             statementData.Add("Customer", invoice.Customer);
+            statementData.Add("Performances", invoice.Performances);
             return RenderPlainText(statementData, invoice, plays);
         }
 
@@ -87,7 +88,7 @@ namespace Refactoring
             }
 
             double TotalAmount() =>
-                invoice.Performances.Aggregate<Performance, double>(0, (current, perf) => current + AmountFor(perf));
+                ((Performance[])data["Performances"]).Aggregate<Performance, double>(0, (current, perf) => current + AmountFor(perf));
 
             double VolumeCreditsFor(Performance aPerformance)
             {
@@ -97,7 +98,8 @@ namespace Refactoring
                 return result;
             }
 
-            double TotalVolumeCredits() => invoice.Performances.Sum(VolumeCreditsFor);
+            double TotalVolumeCredits() => ((Performance[])data["Performances"]).Sum(VolumeCreditsFor);
+
             {
                 var result = $"Statement for {data["Customer"]}\n";
                 foreach (var perf in invoice.Performances)
