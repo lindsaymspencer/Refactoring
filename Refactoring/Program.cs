@@ -46,26 +46,13 @@ namespace Refactoring
 
         public static string Statement(Invoice invoice, Plays plays)
         {
-            var statementData = new Dictionary<string, object>();
-            statementData.Add("Customer", invoice.Customer);
-            statementData.Add("Performances", invoice.Performances.Select(EnrichPerformance).ToArray());
-            statementData.Add("TotalAmount", TotalAmount(statementData));
-            statementData.Add("TotalVolumeCredits", TotalVolumeCredits(statementData));
-            return RenderPlainText(statementData, plays);
+            return RenderPlainText(CreateStatementData(invoice, plays), plays);
+        }
 
-            double TotalAmount(Dictionary<string, object> data) => ((Performance[])data["Performances"]).Aggregate<Performance, double>(0, (current, perf) => current + perf.Amount);
-
-            Performance EnrichPerformance(Performance aPerformance)
-            {
-                var result = new Performance() { Audience = aPerformance.Audience, PlayId = aPerformance.PlayId };
-                result.Play = PlayFor(result);
-                result.Amount = AmountFor(result);
-                result.VolumeCredits = VolumeCreditsFor(result);
-                return result;
-            }
-
+        private static Dictionary<string, object> CreateStatementData(Invoice invoice, Plays plays)
+        {
             Play PlayFor(Performance aPerformance) =>
-                (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
+                (Play) plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
 
             int AmountFor(Performance aPerformance)
             {
@@ -100,18 +87,41 @@ namespace Refactoring
             {
                 int result = 0;
                 result += Math.Max(aPerformance.Audience - 30, 0);
-                if ("comedy" == aPerformance.Play.Type) result += (int)Math.Floor(aPerformance.Audience / (double)5);
+                if ("comedy" == aPerformance.Play.Type) result += (int) Math.Floor(aPerformance.Audience / (double) 5);
                 return result;
             }
+
+            Performance EnrichPerformance(Performance aPerformance)
+            {
+                var result = new Performance() {Audience = aPerformance.Audience, PlayId = aPerformance.PlayId};
+                result.Play = PlayFor(result);
+                result.Amount = AmountFor(result);
+                result.VolumeCredits = VolumeCreditsFor(result);
+                return result;
+            }
+
+            double TotalAmount(Dictionary<string, object> data) =>
+                ((Performance[]) data["Performances"]).Aggregate<Performance, double>(0,
+                    (current, perf) => current + perf.Amount);
 
             double TotalVolumeCredits(Dictionary<string, object> data)
             {
                 var result = 0;
-                foreach (var perf in ((Performance[])data["Performances"]))
+                foreach (var perf in ((Performance[]) data["Performances"]))
                 {
                     result += perf.VolumeCredits;
                 }
+
                 return result;
+            }
+
+            {
+                var statementData = new Dictionary<string, object>();
+                statementData.Add("Customer", invoice.Customer);
+                statementData.Add("Performances", invoice.Performances.Select(EnrichPerformance).ToArray());
+                statementData.Add("TotalAmount", TotalAmount(statementData));
+                statementData.Add("TotalVolumeCredits", TotalVolumeCredits(statementData));
+                return statementData;
             }
         }
 
