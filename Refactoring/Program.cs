@@ -49,7 +49,10 @@ namespace Refactoring
             var statementData = new Dictionary<string, object>();
             statementData.Add("Customer", invoice.Customer);
             statementData.Add("Performances", invoice.Performances.Select(EnrichPerformance).ToArray());
+            statementData.Add("TotalAmount", TotalAmount(statementData));
             return RenderPlainText(statementData, plays);
+
+            double TotalAmount(Dictionary<string, object> data) => ((Performance[])data["Performances"]).Aggregate<Performance, double>(0, (current, perf) => current + perf.Amount);
 
             Performance EnrichPerformance(Performance aPerformance)
             {
@@ -106,8 +109,6 @@ namespace Refactoring
             string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
 
 
-            double TotalAmount() => ((Performance[])data["Performances"]).Aggregate<Performance, double>(0, (current, perf) => current + perf.Amount);
-
             double TotalVolumeCredits()
             {
                 var result = 0;
@@ -125,7 +126,7 @@ namespace Refactoring
                     result += $"  {perf.Play.Name}: {Usd(perf.Amount)} ({perf.Audience} seats)\n";
                 }
 
-                result += $"Amount owed is {Usd(TotalAmount())}\n";
+                result += $"Amount owed is {Usd((double)data["TotalAmount"])}\n";
                 result += $"You earned {TotalVolumeCredits()} credits";
                 return result;
             }
