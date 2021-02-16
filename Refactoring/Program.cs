@@ -46,15 +46,12 @@ namespace Refactoring
             var statementData = new Dictionary<string, object>();
             statementData.Add("Customer", invoice.Customer);
             statementData.Add("Performances", invoice.Performances);
-            return RenderPlainText(statementData, invoice, plays);
+            return RenderPlainText(statementData, plays);
         }
 
-        private static string RenderPlainText(Dictionary<string, object> data, Invoice invoice, Plays plays)
+        private static string RenderPlainText(Dictionary<string, object> data, Plays plays)
         {
-            Play PlayFor(Performance aPerformance)
-            {
-                return (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
-            }
+            Play PlayFor(Performance aPerformance) => (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
 
             string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
 
@@ -87,8 +84,7 @@ namespace Refactoring
                 return result;
             }
 
-            double TotalAmount() =>
-                ((Performance[])data["Performances"]).Aggregate<Performance, double>(0, (current, perf) => current + AmountFor(perf));
+            double TotalAmount() => ((Performance[])data["Performances"]).Aggregate<Performance, double>(0, (current, perf) => current + AmountFor(perf));
 
             double VolumeCreditsFor(Performance aPerformance)
             {
@@ -102,7 +98,7 @@ namespace Refactoring
 
             {
                 var result = $"Statement for {data["Customer"]}\n";
-                foreach (var perf in invoice.Performances)
+                foreach (var perf in ((Performance[])data["Performances"]))
                 {
                     result += $"  {PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
                 }
