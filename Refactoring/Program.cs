@@ -45,8 +45,13 @@ namespace Refactoring
         {
             var statementData = new Dictionary<string, object>();
             statementData.Add("Customer", invoice.Customer);
-            statementData.Add("Performances", invoice.Performances);
+            statementData.Add("Performances", invoice.Performances.Select(EnrichPerformance).ToArray());
             return RenderPlainText(statementData, plays);
+
+            static Performance EnrichPerformance(Performance aPerformance)
+            {
+                    return (Performance) new Performance() { Audience = aPerformance.Audience, PlayId = aPerformance.PlayId };
+            }
         }
 
         private static string RenderPlainText(Dictionary<string, object> data, Plays plays)
