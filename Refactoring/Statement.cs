@@ -75,12 +75,12 @@ namespace Refactoring
             }
 
             {
-                var statementData = new Dictionary<string, object>();
-                statementData.Add("Customer", invoice.Customer);
-                statementData.Add("Performances", invoice.Performances.Select(EnrichPerformance).ToArray());
-                statementData.Add("TotalAmount", TotalAmount(statementData));
-                statementData.Add("TotalVolumeCredits", TotalVolumeCredits(statementData));
-                return statementData;
+                var result = new Dictionary<string, object>();
+                result.Add("Customer", invoice.Customer);
+                result.Add("Performances", invoice.Performances.Select(EnrichPerformance).ToArray());
+                result.Add("TotalAmount", TotalAmount(result));
+                result.Add("TotalVolumeCredits", TotalVolumeCredits(result));
+                return result;
             }
         }
     }
