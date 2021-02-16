@@ -46,10 +46,10 @@ namespace Refactoring
 
         public static string Statement(Invoice invoice, Plays plays)
         {
-            return RenderPlainText(Refactoring.Statement.CreateStatementData(invoice, plays), plays);
+            return RenderPlainText(Refactoring.Statement.CreateStatementData(invoice, plays));
         }
 
-        private static string RenderPlainText(Dictionary<string, object> data, Plays plays)
+        private static string RenderPlainText(Dictionary<string, object> data)
         {
             string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
 
