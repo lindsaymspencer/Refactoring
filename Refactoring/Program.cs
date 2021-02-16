@@ -2,6 +2,7 @@
 using System;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 
 namespace Refactoring
 {
@@ -63,15 +64,7 @@ namespace Refactoring
             return result;
         }
 
-        private static double TotalVolumeCredits()
-        {
-            double volumeCredits = 0;
-            foreach (var perf in invoice.Performances)
-            {
-                volumeCredits += VolumeCreditsFor(perf);
-            }
-            return volumeCredits;
-        }
+        private static double TotalVolumeCredits() => invoice.Performances.Sum(perf => VolumeCreditsFor(perf));
 
         private static string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
 
