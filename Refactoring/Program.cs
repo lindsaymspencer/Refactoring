@@ -33,6 +33,7 @@ namespace Refactoring
         {
             public string PlayId { get; set; }
             public int Audience { get; set; }
+            public Play? Play { get; set; }
         }
 
         public class Invoice
@@ -48,22 +49,24 @@ namespace Refactoring
             statementData.Add("Performances", invoice.Performances.Select(EnrichPerformance).ToArray());
             return RenderPlainText(statementData, plays);
 
-            static Performance EnrichPerformance(Performance aPerformance)
+            Performance EnrichPerformance(Performance aPerformance)
             {
-                    return (Performance) new Performance() { Audience = aPerformance.Audience, PlayId = aPerformance.PlayId };
+                    var result = new Performance() { Audience = aPerformance.Audience, PlayId = aPerformance.PlayId };
+                    result.Play = PlayFor(result);
+                    return result;
             }
+
+            Play PlayFor(Performance aPerformance) => (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
         }
 
         private static string RenderPlainText(Dictionary<string, object> data, Plays plays)
         {
-            Play PlayFor(Performance aPerformance) => (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
-
             string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
 
             int AmountFor(Performance aPerformance)
             {
                 int result;
-                switch (PlayFor(aPerformance).Type)
+                switch (aPerformance.Play.Type)
                 {
                     case "tragedy":
                         result = 40000;
@@ -83,7 +86,7 @@ namespace Refactoring
                         result += 300 * aPerformance.Audience;
                         break;
                     default:
-                        throw new Exception($"unknown type: {PlayFor(aPerformance).Type}");
+                        throw new Exception($"unknown type: {aPerformance.Play.Type}");
                 }
 
                 return result;
@@ -95,7 +98,7 @@ namespace Refactoring
             {
                 double result = 0;
                 result += Math.Max(aPerformance.Audience - 30, 0);
-                if ("comedy" == PlayFor(aPerformance).Type) result += Math.Floor(aPerformance.Audience / (double)5);
+                if ("comedy" == aPerformance.Play.Type) result += Math.Floor(aPerformance.Audience / (double)5);
                 return result;
             }
 
@@ -105,7 +108,7 @@ namespace Refactoring
                 var result = $"Statement for {data["Customer"]}\n";
                 foreach (var perf in ((Performance[])data["Performances"]))
                 {
-                    result += $"  {PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
+                    result += $"  {perf.Play.Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
                 }
 
                 result += $"Amount owed is {Usd(TotalAmount())}\n";
