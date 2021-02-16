@@ -11,10 +11,13 @@ namespace Refactoring
         public class PerformanceCalculator
         {
             private Program.Performance aPerformance;
-            public PerformanceCalculator(Program.Performance aPerformance)
+            public PerformanceCalculator(Program.Performance aPerformance, Program.Play aPlay)
             {
                 this.aPerformance = aPerformance;
+                Play = aPlay;
             }
+
+            public Program.Play Play { get; set; }      
         }
 
         public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Program.Plays plays)
@@ -61,9 +64,9 @@ namespace Refactoring
 
             Program.Performance EnrichPerformance(Program.Performance aPerformance)
             {
-                var calculator = new PerformanceCalculator(aPerformance);
+                var calculator = new PerformanceCalculator(aPerformance, PlayFor(aPerformance));
                 var result = new Program.Performance() {Audience = aPerformance.Audience, PlayId = aPerformance.PlayId};
-                result.Play = PlayFor(result);
+                result.Play = calculator.Play;
                 result.Amount = AmountFor(result);
                 result.VolumeCredits = VolumeCreditsFor(result);
                 return result;
