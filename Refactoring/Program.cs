@@ -51,7 +51,7 @@ namespace Refactoring
 
             foreach (var perf in invoice.Performances)
             {
-                var thisAmount = AmountFor(PlayFor(perf), perf);
+                var thisAmount = AmountFor(perf);
 
                 // add volume credits
                 volumeCredits += Math.Max(perf.Audience - 30, 0);
@@ -74,10 +74,10 @@ namespace Refactoring
             return (Play) plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
         }
 
-        private static int AmountFor(Play play, Performance aPerformance)
+        private static int AmountFor(Performance aPerformance)
         {
             int result;
-            switch (play.Type)
+            switch (PlayFor(aPerformance).Type)
             {
                 case "tragedy":
                     result = 40000;
@@ -97,7 +97,7 @@ namespace Refactoring
                     result += 300 * aPerformance.Audience;
                     break;
                 default:
-                    throw new Exception($"unknown type: {play.Type}");
+                    throw new Exception($"unknown type: {PlayFor(aPerformance).Type}");
             }
 
             return result;
