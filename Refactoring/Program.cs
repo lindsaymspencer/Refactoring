@@ -42,10 +42,11 @@ namespace Refactoring
 
         public static string Statement(Invoice invoice, Plays plays)
         {
-            return RenderPlainText(invoice, plays);
+            object[] statementData = {};
+            return RenderPlainText(statementData, invoice, plays);
         }
 
-        private static string RenderPlainText(Invoice invoice, Plays plays)
+        private static string RenderPlainText(object[] statementData, Invoice invoice, Plays plays)
         {
             Play PlayFor(Performance aPerformance)
             {
