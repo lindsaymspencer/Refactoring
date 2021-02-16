@@ -54,16 +54,22 @@ namespace Refactoring
                 totalAmount += AmountFor(perf);
             }
 
-            double volumeCredits = 0;
-            foreach (var perf in invoice.Performances)
-            {
-                volumeCredits += VolumeCreditsFor(perf);
-            }
+            var volumeCredits = TotalVolumeCredits(invoice);
 
             result += $"Amount owed is {Usd(totalAmount)}\n";
             result += $"You earned {volumeCredits} credits";
 
             return result;
+        }
+
+        private static double TotalVolumeCredits(Invoice invoice)
+        {
+            double volumeCredits = 0;
+            foreach (var perf in invoice.Performances)
+            {
+                volumeCredits += VolumeCreditsFor(perf);
+            }
+            return volumeCredits;
         }
 
         private static string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
