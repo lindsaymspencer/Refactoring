@@ -48,9 +48,9 @@ namespace Refactoring
             plays = tempPlays;
             invoice = tempInvoice;
 
-            double totalAmount = 0;
             var result = $"Statement for {invoice.Customer}\n";
 
+            double totalAmount = 0;
             foreach (var perf in invoice.Performances)
             {
                 // print line for this order
