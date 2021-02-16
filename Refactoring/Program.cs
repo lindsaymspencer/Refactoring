@@ -62,16 +62,7 @@ namespace Refactoring
             return result;
         }
 
-        private static double TotalAmount()
-        {
-            double result = 0;
-            foreach (var perf in invoice.Performances)
-            {
-                result += AmountFor(perf);
-            }
-
-            return result;
-        }
+        private static double TotalAmount() => invoice.Performances.Aggregate<Performance, double>(0, (current, perf) => current + AmountFor(perf));
 
         private static double TotalVolumeCredits() => invoice.Performances.Sum(perf => VolumeCreditsFor(perf));
 
