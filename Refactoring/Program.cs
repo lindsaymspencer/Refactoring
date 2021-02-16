@@ -50,16 +50,19 @@ namespace Refactoring
 
             foreach (var perf in invoice.Performances)
             {
-                volumeCredits += VolumeCreditsFor(perf);
-
                 // print line for this order
                 result += $"  {PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
                 totalAmount += AmountFor(perf);
             }
 
+            foreach (var perf in invoice.Performances)
+            {
+                volumeCredits += VolumeCreditsFor(perf);
+            }
+
             result += $"Amount owed is {Usd(totalAmount)}\n";
             result += $"You earned {volumeCredits} credits";
-            
+
             return result;
         }
 
@@ -69,13 +72,13 @@ namespace Refactoring
         {
             double result = 0;
             result += Math.Max(aPerformance.Audience - 30, 0);
-            if ("comedy" == PlayFor(aPerformance).Type) result += Math.Floor(aPerformance.Audience / (double) 5);
+            if ("comedy" == PlayFor(aPerformance).Type) result += Math.Floor(aPerformance.Audience / (double)5);
             return result;
         }
 
         private static Play PlayFor(Performance aPerformance)
         {
-            return (Play) plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
+            return (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
         }
 
         private static int AmountFor(Performance aPerformance)
