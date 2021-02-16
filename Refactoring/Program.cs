@@ -8,9 +8,6 @@ namespace Refactoring
 {
     public class Program
     {
-        private static Plays plays;
-        private static Invoice invoice;
-
         public static void Main(string[] args)
         {
             var tempPlays = JsonConvert.DeserializeObject<Plays>(File.ReadAllText(@"external\plays.json"));
@@ -43,45 +40,32 @@ namespace Refactoring
             public Performance[] Performances { get; set; }
         }
 
-        public static string Statement(Invoice tempInvoice, Plays tempPlays)
+        public static string Statement(Invoice invoice, Plays plays)
         {
-            plays = tempPlays;
-            invoice = tempInvoice;
-
             var result = $"Statement for {invoice.Customer}\n";
-
             foreach (var perf in invoice.Performances)
             {
-                // print line for this order
                 result += $"  {PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
             }
-
             result += $"Amount owed is {Usd(TotalAmount())}\n";
             result += $"You earned {TotalVolumeCredits()} credits";
-
             return result;
-        }
-
-        private static double TotalAmount() => invoice.Performances.Aggregate<Performance, double>(0, (current, perf) => current + AmountFor(perf));
-
-        private static double TotalVolumeCredits() => invoice.Performances.Sum(VolumeCreditsFor);
-
-        private static string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
-
-        private static double VolumeCreditsFor(Performance aPerformance)
+        
+            double TotalAmount() => invoice.Performances.Aggregate<Performance, double>(0, (current, perf) => current + AmountFor(perf));
+            double TotalVolumeCredits() => invoice.Performances.Sum(VolumeCreditsFor);
+            string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
+            double VolumeCreditsFor(Performance aPerformance)
         {
             double result = 0;
             result += Math.Max(aPerformance.Audience - 30, 0);
             if ("comedy" == PlayFor(aPerformance).Type) result += Math.Floor(aPerformance.Audience / (double)5);
             return result;
         }
-
-        private static Play PlayFor(Performance aPerformance)
+            Play PlayFor(Performance aPerformance)
         {
             return (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
         }
-
-        private static int AmountFor(Performance aPerformance)
+            int AmountFor(Performance aPerformance)
         {
             int result;
             switch (PlayFor(aPerformance).Type)
@@ -108,6 +92,7 @@ namespace Refactoring
             }
 
             return result;
+        }
         }
     }
 }
