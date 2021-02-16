@@ -50,6 +50,7 @@ namespace Refactoring
             statementData.Add("Customer", invoice.Customer);
             statementData.Add("Performances", invoice.Performances.Select(EnrichPerformance).ToArray());
             statementData.Add("TotalAmount", TotalAmount(statementData));
+            statementData.Add("TotalVolumeCredits", TotalVolumeCredits(statementData));
             return RenderPlainText(statementData, plays);
 
             double TotalAmount(Dictionary<string, object> data) => ((Performance[])data["Performances"]).Aggregate<Performance, double>(0, (current, perf) => current + perf.Amount);
@@ -102,14 +103,8 @@ namespace Refactoring
                 if ("comedy" == aPerformance.Play.Type) result += (int)Math.Floor(aPerformance.Audience / (double)5);
                 return result;
             }
-        }
 
-        private static string RenderPlainText(Dictionary<string, object> data, Plays plays)
-        {
-            string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
-
-
-            double TotalVolumeCredits()
+            double TotalVolumeCredits(Dictionary<string, object> data)
             {
                 var result = 0;
                 foreach (var perf in ((Performance[])data["Performances"]))
@@ -118,6 +113,11 @@ namespace Refactoring
                 }
                 return result;
             }
+        }
+
+        private static string RenderPlainText(Dictionary<string, object> data, Plays plays)
+        {
+            string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
 
             {
                 var result = $"Statement for {data["Customer"]}\n";
@@ -127,7 +127,7 @@ namespace Refactoring
                 }
 
                 result += $"Amount owed is {Usd((double)data["TotalAmount"])}\n";
-                result += $"You earned {TotalVolumeCredits()} credits";
+                result += $"You earned {(double)data["TotalVolumeCredits"]} credits";
                 return result;
             }
         }
