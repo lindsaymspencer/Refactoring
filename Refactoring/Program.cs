@@ -53,17 +53,17 @@ namespace Refactoring
                 volumeCredits += VolumeCreditsFor(perf);
 
                 // print line for this order
-                result += $"  {PlayFor(perf).Name}: {Usd(AmountFor(perf) / 100)} ({perf.Audience} seats)\n";
+                result += $"  {PlayFor(perf).Name}: {Usd(AmountFor(perf))} ({perf.Audience} seats)\n";
                 totalAmount += AmountFor(perf);
             }
 
-            result += $"Amount owed is {Usd(totalAmount / 100)}\n";
+            result += $"Amount owed is {Usd(totalAmount)}\n";
             result += $"You earned {volumeCredits} credits";
             
             return result;
         }
 
-        private static string Usd(double aNumber) => aNumber.ToString("c", new CultureInfo("en-US"));
+        private static string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
 
         private static double VolumeCreditsFor(Performance aPerformance)
         {
