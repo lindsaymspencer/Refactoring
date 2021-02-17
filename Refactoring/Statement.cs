@@ -17,11 +17,10 @@ namespace Refactoring
             }
             public virtual int Amount() => throw new Exception("Subclass responsibility.");
 
-            public int VolumeCredits()
+            public virtual int VolumeCredits()
             {
                 int result = 0;
                 result += Math.Max(Performance.Audience - 30, 0);
-                if ("comedy" == Play.Type) result += (int)Math.Floor(Performance.Audience / (double)5);
                 return result;
             }
 
@@ -62,6 +61,8 @@ namespace Refactoring
                 result += 300 * Performance.Audience;
                 return result;
             }
+
+            public override int VolumeCredits() => base.VolumeCredits() + (int)Math.Floor(Performance.Audience / (double)5);
         }
 
         public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Program.Plays plays)
