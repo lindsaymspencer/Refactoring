@@ -17,12 +17,6 @@ namespace Refactoring
             Console.Write(PlainTextStatement(invoices[0], tempPlays));
         }
 
-        public class Invoice
-        {
-            public string Customer { get; set; }
-            public Performance[] Performances { get; set; }
-        }
-
         static string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
 
         public static string PlainTextStatement(Invoice invoice, Plays plays)

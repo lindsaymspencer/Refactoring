@@ -15,7 +15,7 @@ namespace Refactoring.TestFixture
             aslike = new Play { Name = "As You Like It", Type = "comedy" },
             othello = new Play { Name = "Othello", Type = "tragedy" }
         };
-        Program.Invoice[] invoices = new Program.Invoice[1];
+        Invoice[] invoices = new Invoice[1];
 
         private void Setup()
         {
@@ -23,7 +23,7 @@ namespace Refactoring.TestFixture
             var y = new Performance { PlayId = "aslike", Audience = 35 };
             var z = new Performance { PlayId = "othello", Audience = 40 };
 
-            invoices[0] = new Program.Invoice
+            invoices[0] = new Invoice
             {
                 Customer = "BigCo",
                 Performances = new Performance[3]

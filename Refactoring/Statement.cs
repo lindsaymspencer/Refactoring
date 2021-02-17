@@ -66,7 +66,7 @@ namespace Refactoring
             public override int VolumeCredits() => base.VolumeCredits() + (int)Math.Floor(Performance.Audience / (double)5);
         }
 
-        public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Plays plays)
+        public static Dictionary<string, object> CreateStatementData(Invoice invoice, Plays plays)
         {
             Play PlayFor(Performance aPerformance) =>
                 (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
