@@ -1,10 +1,10 @@
 ﻿using Newtonsoft.Json;
+using Refactoring.Models;
 using System;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
-using System.Linq;
-using Refactoring.Models;
+using Refactoring.Services;
 
 namespace Refactoring
 {
@@ -58,12 +58,12 @@ namespace Refactoring
             return result;
         }
 
-        public static Statement.PerformanceCalculator CreatePerformanceCalculator(Performance aPerformance, Play aPlay)
+        public static PerformanceCalculator CreatePerformanceCalculator(Performance aPerformance, Play aPlay)
         {
             return aPlay.Type switch
             {
-                "tragedy" => new Statement.TragedyCalculator(aPerformance, aPlay),
-                "comedy" => new Statement.ComedyCalculator(aPerformance, aPlay),
+                "tragedy" => new TragedyCalculator(aPerformance, aPlay),
+                "comedy" => new ComedyCalculator(aPerformance, aPlay),
                 _ => throw new Exception($"Unknown type: {aPlay.Type}")
             };
         } 
