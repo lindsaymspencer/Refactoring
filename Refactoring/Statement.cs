@@ -10,33 +10,26 @@ namespace Refactoring
     {
         public class PerformanceCalculator
         {
-            private Program.Performance aPerformance;
             public PerformanceCalculator(Program.Performance aPerformance, Program.Play aPlay)
             {
-                this.aPerformance = aPerformance;
+                Performance = aPerformance;
                 Play = aPlay;
             }
-            public int Amount()
+            public virtual int Amount()
             {
                 int result;
                 switch (Play.Type)
                 {
                     case "tragedy":
-                        result = 40000;
-                        if (aPerformance.Audience > 30)
-                        {
-                            result += 1000 * (aPerformance.Audience - 30);
-                        }
-
-                        break;
+                        throw new Exception("Bad Thing");
                     case "comedy":
                         result = 30000;
-                        if (aPerformance.Audience > 20)
+                        if (Performance.Audience > 20)
                         {
-                            result += 10000 + 500 * (aPerformance.Audience - 20);
+                            result += 10000 + 500 * (Performance.Audience - 20);
                         }
 
-                        result += 300 * aPerformance.Audience;
+                        result += 300 * Performance.Audience;
                         break;
                     default:
                         throw new Exception($"unknown type: {Play.Type}");
@@ -48,19 +41,31 @@ namespace Refactoring
             public int VolumeCredits()
             {
                 int result = 0;
-                result += Math.Max(aPerformance.Audience - 30, 0);
-                if ("comedy" == Play.Type) result += (int)Math.Floor(aPerformance.Audience / (double)5);
+                result += Math.Max(Performance.Audience - 30, 0);
+                if ("comedy" == Play.Type) result += (int)Math.Floor(Performance.Audience / (double)5);
                 return result;
             }
 
-            public Program.Play Play { get; set; }      
+            public Program.Play Play { get; set; }
+            public Program.Performance Performance { get; set; }
         }
 
         public class TragedyCalculator : PerformanceCalculator
         {
-            public TragedyCalculator(Program.Performance aPerformance, Program.Play aPlay) : 
+            public TragedyCalculator(Program.Performance aPerformance, Program.Play aPlay) :
                 base(aPerformance, aPlay)
             { }
+            public override int Amount()
+            {
+                int result = 40000;
+                if (Performance.Audience > 30)
+                {
+                    result += 1000 * (Performance.Audience - 30);
+                }
+
+                return result;
+            }
+
         }
         public class ComedyCalculator : PerformanceCalculator
         {
@@ -72,12 +77,12 @@ namespace Refactoring
         public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Program.Plays plays)
         {
             Program.Play PlayFor(Program.Performance aPerformance) =>
-                (Program.Play) plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
+                (Program.Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
 
             Program.Performance EnrichPerformance(Program.Performance aPerformance)
             {
                 var calculator = Program.CreatePerformanceCalculator(aPerformance, PlayFor(aPerformance));
-                var result = new Program.Performance() {Audience = aPerformance.Audience, PlayId = aPerformance.PlayId};
+                var result = new Program.Performance() { Audience = aPerformance.Audience, PlayId = aPerformance.PlayId };
                 result.Play = calculator.Play;
                 result.Amount = calculator.Amount();
                 result.VolumeCredits = calculator.VolumeCredits();
@@ -85,13 +90,13 @@ namespace Refactoring
             }
 
             double TotalAmount(Dictionary<string, object> data) =>
-                ((Program.Performance[]) data["Performances"]).Aggregate<Program.Performance, double>(0,
+                ((Program.Performance[])data["Performances"]).Aggregate<Program.Performance, double>(0,
                     (current, perf) => current + perf.Amount);
 
             double TotalVolumeCredits(Dictionary<string, object> data)
             {
                 var result = 0;
-                foreach (var perf in ((Program.Performance[]) data["Performances"]))
+                foreach (var perf in ((Program.Performance[])data["Performances"]))
                 {
                     result += perf.VolumeCredits;
                 }
