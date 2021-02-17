@@ -19,14 +19,14 @@ namespace Refactoring.TestFixture
 
         private void Setup()
         {
-            var x = new Program.Performance { PlayId = "hamlet", Audience = 55 };
-            var y = new Program.Performance { PlayId = "aslike", Audience = 35 };
-            var z = new Program.Performance { PlayId = "othello", Audience = 40 };
+            var x = new Performance { PlayId = "hamlet", Audience = 55 };
+            var y = new Performance { PlayId = "aslike", Audience = 35 };
+            var z = new Performance { PlayId = "othello", Audience = 40 };
 
             invoices[0] = new Program.Invoice
             {
                 Customer = "BigCo",
-                Performances = new Program.Performance[3]
+                Performances = new Performance[3]
             };
             invoices[0].Performances[0] = x;
             invoices[0].Performances[1] = y;

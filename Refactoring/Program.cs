@@ -8,22 +8,13 @@ using Refactoring.Models;
 
 namespace Refactoring
 {
-    public partial class Program
+    public class Program
     {
         public static void Main(string[] args)
         {
             var tempPlays = JsonConvert.DeserializeObject<Plays>(File.ReadAllText(@"external\plays.json"));
             var invoices = JsonConvert.DeserializeObject<Invoice[]>(File.ReadAllText(@"external\invoices.json"));
             Console.Write(PlainTextStatement(invoices[0], tempPlays));
-        }
-
-        public class Performance
-        {
-            public string PlayId { get; set; }
-            public int Audience { get; set; }
-            public Play Play { get; set; }
-            public double Amount { get; set; }
-            public int VolumeCredits { get; set; }
         }
 
         public class Invoice

@@ -11,7 +11,7 @@ namespace Refactoring
     {
         public class PerformanceCalculator
         {
-            public PerformanceCalculator(Program.Performance aPerformance, Play aPlay)
+            public PerformanceCalculator(Performance aPerformance, Play aPlay)
             {
                 Performance = aPerformance;
                 Play = aPlay;
@@ -26,12 +26,12 @@ namespace Refactoring
             }
 
             public Play Play { get; set; }
-            public Program.Performance Performance { get; set; }
+            public Performance Performance { get; set; }
         }
 
         public class TragedyCalculator : PerformanceCalculator
         {
-            public TragedyCalculator(Program.Performance aPerformance, Play aPlay) :
+            public TragedyCalculator(Performance aPerformance, Play aPlay) :
                 base(aPerformance, aPlay)
             { }
             public override int Amount()
@@ -48,7 +48,7 @@ namespace Refactoring
         }
         public class ComedyCalculator : PerformanceCalculator
         {
-            public ComedyCalculator(Program.Performance aPerformance, Play aPlay) :
+            public ComedyCalculator(Performance aPerformance, Play aPlay) :
                 base(aPerformance, aPlay)
             { }
 
@@ -68,13 +68,13 @@ namespace Refactoring
 
         public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Plays plays)
         {
-            Play PlayFor(Program.Performance aPerformance) =>
+            Play PlayFor(Performance aPerformance) =>
                 (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
 
-            Program.Performance EnrichPerformance(Program.Performance aPerformance)
+            Performance EnrichPerformance(Performance aPerformance)
             {
                 var calculator = Program.CreatePerformanceCalculator(aPerformance, PlayFor(aPerformance));
-                var result = new Program.Performance() { Audience = aPerformance.Audience, PlayId = aPerformance.PlayId };
+                var result = new Performance() { Audience = aPerformance.Audience, PlayId = aPerformance.PlayId };
                 result.Play = calculator.Play;
                 result.Amount = calculator.Amount();
                 result.VolumeCredits = calculator.VolumeCredits();
@@ -82,13 +82,13 @@ namespace Refactoring
             }
 
             double TotalAmount(Dictionary<string, object> data) =>
-                ((Program.Performance[])data["Performances"]).Aggregate<Program.Performance, double>(0,
+                ((Performance[])data["Performances"]).Aggregate<Performance, double>(0,
                     (current, perf) => current + perf.Amount);
 
             double TotalVolumeCredits(Dictionary<string, object> data)
             {
                 var result = 0;
-                foreach (var perf in ((Program.Performance[])data["Performances"]))
+                foreach (var perf in ((Performance[])data["Performances"]))
                 {
                     result += perf.VolumeCredits;
                 }
