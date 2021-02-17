@@ -1,10 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Refactoring.Models;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
 using System.IO;
-using Refactoring.Services;
 
 namespace Refactoring
 {

@@ -9,7 +9,9 @@ namespace Refactoring
 {
     public class Statement
     {
-        public static Dictionary<string, object> CreateStatementData(Invoice invoice, Plays plays)
+        private static string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
+
+        private static Dictionary<string, object> CreateStatementData(Invoice invoice, Plays plays)
         {
             Play PlayFor(Performance aPerformance) =>
                 (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
@@ -17,10 +19,14 @@ namespace Refactoring
             Performance EnrichPerformance(Performance aPerformance)
             {
                 var calculator = CreatePerformanceCalculator(aPerformance, PlayFor(aPerformance));
-                var result = new Performance() { Audience = aPerformance.Audience, PlayId = aPerformance.PlayId };
-                result.Play = calculator.Play;
-                result.Amount = calculator.Amount();
-                result.VolumeCredits = calculator.VolumeCredits();
+                var result = new Performance
+                {
+                    Audience = aPerformance.Audience,
+                    PlayId = aPerformance.PlayId,
+                    Play = calculator.Play,
+                    Amount = calculator.Amount(),
+                    VolumeCredits = calculator.VolumeCredits()
+                };
                 return result;
             }
 
@@ -28,17 +34,8 @@ namespace Refactoring
                 ((Performance[])data["Performances"]).Aggregate<Performance, double>(0,
                     (current, perf) => current + perf.Amount);
 
-            double TotalVolumeCredits(Dictionary<string, object> data)
-            {
-                var result = 0;
-                foreach (var perf in ((Performance[])data["Performances"]))
-                {
-                    result += perf.VolumeCredits;
-                }
-
-                return result;
-            }
-
+            double TotalVolumeCredits(Dictionary<string, object> data) =>
+                ((Performance[])data["Performances"]).Sum(perf => perf.VolumeCredits);
             {
                 var result = new Dictionary<string, object>();
                 result.Add("Customer", invoice.Customer);
@@ -49,31 +46,19 @@ namespace Refactoring
             }
         }
 
-        private static string Usd(double aNumber) => (aNumber / 100).ToString("c", new CultureInfo("en-US"));
 
-        public static string PlainTextStatement(Invoice invoice, Plays plays)
-        {
-            return RenderPlainText(Refactoring.Statement.CreateStatementData(invoice, plays));
-        }
-
-        public static string RenderPlainText(Dictionary<string, object> data)
+        private static string RenderPlainText(Dictionary<string, object> data)
         {
             var result = $"PlainTextStatement for {data["Customer"]}\n";
-            foreach (var perf in ((Performance[])data["Performances"]))
-            {
-                result += $"  {perf.Play.Name}: {Usd(perf.Amount)} ({perf.Audience} seats)\n";
-            }
+            result = ((Performance[])data["Performances"])
+                .Aggregate(result, (current, perf) =>
+                    current + $"  {perf.Play.Name}: {Usd(perf.Amount)} ({perf.Audience} seats)\n");
             result += $"Amount owed is {Usd((double)data["TotalAmount"])}\n";
             result += $"You earned {(double)data["TotalVolumeCredits"]} credits";
             return result;
         }
 
-        public static string HtmlStatement(Invoice invoice, Plays plays)
-        {
-            return RenderHtml(Refactoring.Statement.CreateStatementData(invoice, plays));
-        }
-
-        public static string RenderHtml(Dictionary<string, object> data)
+        private static string RenderHtml(Dictionary<string, object> data)
         {
             var result = $"<h1>PlainTextStatement for {data["Customer"]}</h1>";
             result += "<table>";
@@ -86,11 +71,11 @@ namespace Refactoring
 
             result += "</table>";
             result += $"<p>Amount owed is <em>{Usd((double)data["TotalAmount"])}</em></p>";
-            result += $"<p>You earned <em>{(double) data["TotalVolumeCredits"]}</em> credits</p>";
+            result += $"<p>You earned <em>{(double)data["TotalVolumeCredits"]}</em> credits</p>";
             return result;
         }
 
-        public static PerformanceCalculator CreatePerformanceCalculator(Performance aPerformance, Play aPlay)
+        private static PerformanceCalculator CreatePerformanceCalculator(Performance aPerformance, Play aPlay)
         {
             return aPlay.Type switch
             {
@@ -99,5 +84,11 @@ namespace Refactoring
                 _ => throw new Exception($"Unknown type: {aPlay.Type}")
             };
         }
+
+        public static string HtmlStatement(Invoice invoice, Plays plays) =>
+            RenderHtml(CreateStatementData(invoice, plays));
+
+        public static string PlainTextStatement(Invoice invoice, Plays plays) =>
+            RenderPlainText(CreateStatementData(invoice, plays));
     }
 }
