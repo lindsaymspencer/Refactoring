@@ -56,6 +56,19 @@ namespace Refactoring
             public Program.Play Play { get; set; }      
         }
 
+        public class TragedyCalculator : PerformanceCalculator
+        {
+            public TragedyCalculator(Program.Performance aPerformance, Program.Play aPlay) : 
+                base(aPerformance, aPlay)
+            { }
+        }
+        public class ComedyCalculator : PerformanceCalculator
+        {
+            public ComedyCalculator(Program.Performance aPerformance, Program.Play aPlay) :
+                base(aPerformance, aPlay)
+            { }
+        }
+
         public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Program.Plays plays)
         {
             Program.Play PlayFor(Program.Performance aPerformance) =>

@@ -85,7 +85,14 @@ namespace Refactoring
             return result;
         }
 
-        public static Statement.PerformanceCalculator CreatePerformanceCalculator(Performance aPerformance, Play aPlay) => 
-            new Statement.PerformanceCalculator(aPerformance, aPlay);
+        public static Statement.PerformanceCalculator CreatePerformanceCalculator(Performance aPerformance, Play aPlay)
+        {
+            return aPlay.Type switch
+            {
+                "tragedy" => new Statement.TragedyCalculator(aPerformance, aPlay),
+                "comedy" => new Statement.ComedyCalculator(aPerformance, aPlay),
+                _ => throw new Exception($"Unknown type: {aPlay.Type}")
+            };
+        } 
     }
 }
