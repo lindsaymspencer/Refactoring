@@ -45,6 +45,14 @@ namespace Refactoring
                 return result;
             }
 
+            public int VolumeCredits()
+            {
+                int result = 0;
+                result += Math.Max(aPerformance.Audience - 30, 0);
+                if ("comedy" == Play.Type) result += (int)Math.Floor(aPerformance.Audience / (double)5);
+                return result;
+            }
+
             public Program.Play Play { get; set; }      
         }
 
@@ -53,22 +61,13 @@ namespace Refactoring
             Program.Play PlayFor(Program.Performance aPerformance) =>
                 (Program.Play) plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
 
-           
-            int VolumeCreditsFor(Program.Performance aPerformance)
-            {
-                int result = 0;
-                result += Math.Max(aPerformance.Audience - 30, 0);
-                if ("comedy" == aPerformance.Play.Type) result += (int) Math.Floor(aPerformance.Audience / (double) 5);
-                return result;
-            }
-
             Program.Performance EnrichPerformance(Program.Performance aPerformance)
             {
                 var calculator = new PerformanceCalculator(aPerformance, PlayFor(aPerformance));
                 var result = new Program.Performance() {Audience = aPerformance.Audience, PlayId = aPerformance.PlayId};
                 result.Play = calculator.Play;
                 result.Amount = calculator.Amount();
-                result.VolumeCredits = VolumeCreditsFor(result);
+                result.VolumeCredits = calculator.VolumeCredits();
                 return result;
             }
 
