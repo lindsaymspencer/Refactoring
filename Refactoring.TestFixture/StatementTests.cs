@@ -11,9 +11,9 @@ namespace Refactoring.TestFixture
     {
         private Plays plays = new Plays()
         {
-            hamlet = new Program.Play { Name = "Hamlet", Type = "tragedy" },
-            aslike = new Program.Play { Name = "As You Like It", Type = "comedy" },
-            othello = new Program.Play { Name = "Othello", Type = "tragedy" }
+            hamlet = new Play { Name = "Hamlet", Type = "tragedy" },
+            aslike = new Play { Name = "As You Like It", Type = "comedy" },
+            othello = new Play { Name = "Othello", Type = "tragedy" }
         };
         Program.Invoice[] invoices = new Program.Invoice[1];
 

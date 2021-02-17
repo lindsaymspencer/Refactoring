@@ -2,8 +2,8 @@
 {
     public class Plays
     {
-        public Program.Play hamlet { get; set; }
-        public Program.Play aslike { get; set; }
-        public Program.Play othello { get; set; }
+        public Play hamlet { get; set; }
+        public Play aslike { get; set; }
+        public Play othello { get; set; }
     }
 }

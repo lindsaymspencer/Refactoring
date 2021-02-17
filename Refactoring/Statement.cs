@@ -11,7 +11,7 @@ namespace Refactoring
     {
         public class PerformanceCalculator
         {
-            public PerformanceCalculator(Program.Performance aPerformance, Program.Play aPlay)
+            public PerformanceCalculator(Program.Performance aPerformance, Play aPlay)
             {
                 Performance = aPerformance;
                 Play = aPlay;
@@ -25,13 +25,13 @@ namespace Refactoring
                 return result;
             }
 
-            public Program.Play Play { get; set; }
+            public Play Play { get; set; }
             public Program.Performance Performance { get; set; }
         }
 
         public class TragedyCalculator : PerformanceCalculator
         {
-            public TragedyCalculator(Program.Performance aPerformance, Program.Play aPlay) :
+            public TragedyCalculator(Program.Performance aPerformance, Play aPlay) :
                 base(aPerformance, aPlay)
             { }
             public override int Amount()
@@ -48,7 +48,7 @@ namespace Refactoring
         }
         public class ComedyCalculator : PerformanceCalculator
         {
-            public ComedyCalculator(Program.Performance aPerformance, Program.Play aPlay) :
+            public ComedyCalculator(Program.Performance aPerformance, Play aPlay) :
                 base(aPerformance, aPlay)
             { }
 
@@ -68,8 +68,8 @@ namespace Refactoring
 
         public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Plays plays)
         {
-            Program.Play PlayFor(Program.Performance aPerformance) =>
-                (Program.Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
+            Play PlayFor(Program.Performance aPerformance) =>
+                (Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
 
             Program.Performance EnrichPerformance(Program.Performance aPerformance)
             {
