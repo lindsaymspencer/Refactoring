@@ -1,12 +1,15 @@
 ﻿using System;
 using System.Reflection.Metadata;
+using Refactoring.Models;
 using Xunit;
+
+
 
 namespace Refactoring.TestFixture
 {
     public class StatementTests
     {
-        private Program.Plays plays = new Program.Plays()
+        private Plays plays = new Plays()
         {
             hamlet = new Program.Play { Name = "Hamlet", Type = "tragedy" },
             aslike = new Program.Play { Name = "As You Like It", Type = "comedy" },

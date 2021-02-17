@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using Refactoring.Models;
 
 namespace Refactoring
 {
@@ -14,13 +15,6 @@ namespace Refactoring
             var tempPlays = JsonConvert.DeserializeObject<Plays>(File.ReadAllText(@"external\plays.json"));
             var invoices = JsonConvert.DeserializeObject<Invoice[]>(File.ReadAllText(@"external\invoices.json"));
             Console.Write(PlainTextStatement(invoices[0], tempPlays));
-        }
-
-        public class Plays
-        {
-            public Play hamlet { get; set; }
-            public Play aslike { get; set; }
-            public Play othello { get; set; }
         }
 
         public class Play

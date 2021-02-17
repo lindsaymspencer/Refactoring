@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Refactoring.Models;
 
 namespace Refactoring
 {
@@ -65,7 +66,7 @@ namespace Refactoring
             public override int VolumeCredits() => base.VolumeCredits() + (int)Math.Floor(Performance.Audience / (double)5);
         }
 
-        public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Program.Plays plays)
+        public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Plays plays)
         {
             Program.Play PlayFor(Program.Performance aPerformance) =>
                 (Program.Play)plays.GetType().GetProperty(aPerformance.PlayId)?.GetValue(plays, null);
