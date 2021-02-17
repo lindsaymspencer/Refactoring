@@ -63,7 +63,7 @@ namespace Refactoring
 
             Program.Performance EnrichPerformance(Program.Performance aPerformance)
             {
-                var calculator = new PerformanceCalculator(aPerformance, PlayFor(aPerformance));
+                var calculator = Program.CreatePerformanceCalculator(aPerformance, PlayFor(aPerformance));
                 var result = new Program.Performance() {Audience = aPerformance.Audience, PlayId = aPerformance.PlayId};
                 result.Play = calculator.Play;
                 result.Amount = calculator.Amount();

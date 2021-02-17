@@ -84,5 +84,8 @@ namespace Refactoring
             result += $"<p>You earned <em>{(double) data["TotalVolumeCredits"]}</em> credits</p>";
             return result;
         }
+
+        public static Statement.PerformanceCalculator CreatePerformanceCalculator(Performance aPerformance, Play aPlay) => 
+            new Statement.PerformanceCalculator(aPerformance, aPlay);
     }
 }
