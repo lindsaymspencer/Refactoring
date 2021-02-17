@@ -15,28 +15,7 @@ namespace Refactoring
                 Performance = aPerformance;
                 Play = aPlay;
             }
-            public virtual int Amount()
-            {
-                int result;
-                switch (Play.Type)
-                {
-                    case "tragedy":
-                        throw new Exception("Bad Thing");
-                    case "comedy":
-                        result = 30000;
-                        if (Performance.Audience > 20)
-                        {
-                            result += 10000 + 500 * (Performance.Audience - 20);
-                        }
-
-                        result += 300 * Performance.Audience;
-                        break;
-                    default:
-                        throw new Exception($"unknown type: {Play.Type}");
-                }
-
-                return result;
-            }
+            public virtual int Amount() => throw new Exception("Subclass responsibility.");
 
             public int VolumeCredits()
             {
@@ -72,6 +51,17 @@ namespace Refactoring
             public ComedyCalculator(Program.Performance aPerformance, Program.Play aPlay) :
                 base(aPerformance, aPlay)
             { }
+
+            public override int Amount()
+            {
+                int result = 30000;
+                if (Performance.Audience > 20)
+                {
+                    result += 10000 + 500 * (Performance.Audience - 20);
+                }
+                result += 300 * Performance.Audience;
+                return result;
+            }
         }
 
         public static Dictionary<string, object> CreateStatementData(Program.Invoice invoice, Program.Plays plays)
